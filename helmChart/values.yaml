@@ -66,4 +66,4 @@ deployment:
   volume:
    name: web-page-files
    type: Directory
-   path: /var/lib/jenkins/workspace/deployToStageKubernetesCluster 
+   path: /home/folderToStoreFileFromJenkins 

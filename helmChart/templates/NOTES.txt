@@ -1,0 +1,11 @@
+1. Simple web application started. 
+
+2. Chart name is {{ .Chart.Name }}. 
+   Release name is {{ .Release.Name }}. 
+   Namespace is {{ .Release.Namespace }}. 
+
+3. Application based on {{ .Values.deployment.template.spec.containers.repo }}/{{ .Values.deployment.template.spec.containers.image }} docker image 
+   and handles deployment with {{ .Values.deployment.replicaCount }} copies of pods.
+
+4. Application reached over URL: 
+   http://{{- .Values.service.externalIPs }}:{{- .Values.service.ports.port }} 

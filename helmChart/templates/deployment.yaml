@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: {{ .Values.deployment.name | quote }}
+spec:
+ replicas: {{ .Values.deployment.replicaCount }}
+ minReadySeconds: {{ .Values.deployment.minReadySeconds }}
+ strategy:
+  rollingUpdate:
+    maxSurge: {{ .Values.deployment.strategy.rollingUpdate.maxSurge }}
+    maxUnavailable: {{ .Values.deployment.strategy.rollingUpdate.maxUnavailable }}
+  type: {{ .Values.deployment.strategy.type | quote }}
+ selector:
+  matchLabels:
+   app: {{ .Values.deployment.selector.app | quote }}
+ template:
+  metadata:
+   name: {{ .Values.deployment.template.name | quote }}
+   labels:
+    app: {{ .Values.deployment.template.labels.app | quote }}
+  spec:
+   containers:
+   - image: {{ .Values.deployment.template.spec.containers.repo }}/{{ .Values.deployment.template.spec.containers.image }}:{{ .Values.deployment.template.spec.containers.tag }}
+     name: {{ .Values.deployment.template.spec.containers.name | quote }}
+     imagePullPolicy: {{ .Values.deployment.template.spec.containers.imagePullPolicy | quote }}
+     readinessProbe:
+      initialDelaySeconds: {{ .Values.deployment.template.spec.containers.readynessProbe.initialDelaySeconds }}
+      periodSeconds: {{ .Values.deployment.template.spec.containers.readynessProbe.periodSeconds }}
+      httpGet:
+       path: /
+       port: {{ .Values.deployment.template.spec.containers.readynessProbe.containerPort }}
+     volumeMounts:
+     - mountPath: {{ .Values.deployment.template.spec.containers.volumeMounts.destPath | quote }}
+       name: {{ .Values.deployment.template.volume.name | quote }}
+   volumes:
+   - name: {{ .Values.deployment.template.volume.name | quote }}
+     hostPath:
+       path: {{ .Values.deployment.template.volume.path | quote }}
+       type: {{ .Values.deployment.template.volume.type | quote }}

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+ name: {{ .Values.limRangeName | quote }}
+spec:
+ limits:
+ - type: {{ .Values.podRestriction }}
+   min:
+     cpu: {{ .Values.podminCPU }}
+     memory: {{ .Values.podminMemory }}
+   max:
+     cpu: {{ .Values.podmaxCPU }}
+     memory: {{ .Values.podmaxMemory }}
+ - type: {{ .Values.containerRestriction | quote }}
+   defaultRequest:
+    cpu: {{ .Values.defaultContainerCPURequest }}
+    memory: {{ .Values.defaultContainerMemoryRequest }}
+   default:
+    cpu: {{ .Values.defaultContainerCPULimit }}
+    memory: {{ .Values.defaultContainerMemoryLimit }}
+   min:
+    cpu: {{ .Values.minContainerCPU }}
+    memory: {{ .Values.minContainerMemory }}
+   max:
+    cpu: {{ .Values.maxContainerCPU }}
+    memory: {{ .Values.maxContainerMemory }}
+

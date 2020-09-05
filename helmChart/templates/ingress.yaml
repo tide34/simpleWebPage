@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+ name: {{ .Values.ingressName | quote }}
+spec:
+ rules:
+ - host: {{ .Values.URL | quote }}
+   http:
+    paths:
+    - path: {{ .Values.ingressPath1 | quote }}
+      backend:
+       serviceName: {{ .Values.serviceName | quote }}
+       servicePort: {{ .Values.servicePorts.port }}

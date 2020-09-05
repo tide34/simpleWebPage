@@ -1,39 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
- name: {{ .Values.deployment.name | quote }}
+ name: {{ .Values.deploymentName | quote }}
 spec:
- replicas: {{ .Values.deployment.replicaCount }}
- minReadySeconds: {{ .Values.deployment.minReadySeconds }}
+ replicas: {{ .Values.replicaCount }}
+ minReadySeconds: {{ .Values.minReadySeconds }}
  strategy:
   rollingUpdate:
-    maxSurge: {{ .Values.deployment.strategy.rollingUpdate.maxSurge }}
-    maxUnavailable: {{ .Values.deployment.strategy.rollingUpdate.maxUnavailable }}
-  type: {{ .Values.deployment.strategy.type | quote }}
+    maxSurge: {{ .Values.rollingUpdate.maxSurge }}
+    maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
+  type: {{ .Values.strategyType | quote }}
  selector:
   matchLabels:
-   app: {{ .Values.deployment.selector.app | quote }}
+   app: {{ .Values.deploymentSelector.app | quote }}
  template:
   metadata:
-   name: {{ .Values.deployment.template.name | quote }}
+   name: {{ .Values.podTemplate.name | quote }}
    labels:
-    app: {{ .Values.deployment.template.labels.app | quote }}
+    app: {{ .Values.podTemplate.labels.app | quote }}
   spec:
    containers:
-   - image: {{ .Values.deployment.template.spec.containers.repo }}/{{ .Values.deployment.template.spec.containers.image }}:{{ .Values.deployment.template.spec.containers.tag }}
-     name: {{ .Values.deployment.template.spec.containers.name | quote }}
-     imagePullPolicy: {{ .Values.deployment.template.spec.containers.imagePullPolicy | quote }}
+   - image: {{ .Values.containers.repo }}/{{ .Values.containers.image }}:{{ .Values.containers.tag }}
+     name: {{ .Values.containers.name | quote }}
+     imagePullPolicy: {{ .Values.containers.imagePullPolicy | quote }}
      readinessProbe:
-      initialDelaySeconds: {{ .Values.deployment.template.spec.containers.readynessProbe.initialDelaySeconds }}
-      periodSeconds: {{ .Values.deployment.template.spec.containers.readynessProbe.periodSeconds }}
+      initialDelaySeconds: {{ .Values.containers.readynessProbe.initialDelaySeconds }}
+      periodSeconds: {{ .Values.containers.readynessProbe.periodSeconds }}
       httpGet:
        path: /
-       port: {{ .Values.deployment.template.spec.containers.readynessProbe.containerPort }}
+       port: {{ .Values.containers.readynessProbe.containerPort }}
      volumeMounts:
-     - mountPath: {{ .Values.deployment.template.spec.containers.volumeMounts.destPath | quote }}
-       name: {{ .Values.deployment.template.volume.name | quote }}
+     - mountPath: {{ .Values.containers.volumeMounts.destPath | quote }}
+       name: {{ .Values.volume.name | quote }}
+     resources:
+      requests:
+       cpu: {{ .Values.containers.resources.reqCPU }}
+       memory: {{ .Values.containers.resources.reqMemory }}
+      limits:
+       cpu: {{ .Values.containers.resources.limCPU }}
+       memory: {{ .Values.containers.resources.limMemory }}
    volumes:
-   - name: {{ .Values.deployment.template.volume.name | quote }}
+   - name: {{ .Values.volume.name | quote }}
      hostPath:
-       path: {{ .Values.deployment.template.volume.path | quote }}
-       type: {{ .Values.deployment.template.volume.type | quote }}
+       path: {{ .Values.volume.path | quote }}
+       type: {{ .Values.volume.type | quote }}

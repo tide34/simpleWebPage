@@ -1,69 +1,148 @@
 ############################################################
+# define parameters to determine service.yaml file. 
 
-service:
  # service name
- name: application-access-point
+ serviceName: application-access-point
  
  # type of service can be ClusterIP, LoadBalancer, NodePort 
- type: ClusterIP
+ serviceType: ClusterIP
  
  # define title of service selector.
- selectorName: web-serv
-
+ serviceSelector: web-serv
+ 
  #port settings of the current service
- ports:
+ servicePorts:
    port: 8020
+   targetPort: 80
    protocol: TCP
  externalIPs:
- - 192.168.100.126
-
-
+ - 192.168.0.106
+ 
+ 
 #############################################################
-
-deployment: 
+# define parameters to determine deployment.yaml file.
  
  # deployment name
- name: deployment-web-servers
+ deploymentName: deployment-web-servers
  
  # define quantity of 
  replicaCount: 3
  minReadySeconds: 10
  
  # define strategy of rolling-out pods
- strategy:
-  type: RollingUpdate
-  rollingUpdate:
+ 
+ strategyType: RollingUpdate
+ rollingUpdate:
    maxSurge: 1
    maxUnavailable: 0
  
  # define selector of ReplicaSet
- selector:
+ deploymentSelector:
   app: web-serv
-
+ 
  # define characteristics of pod
- template:
+ podTemplate:
   name: web-server
   labels:
     app: web-serv
   
-  # define characteristics of container 
-  spec:
-   containers:
-    repo: tide34
-    image: custom
-    tag: latest
-    name: httpd
-    imagePullPolicy: Always
+ # define characteristics of container 
+ containers:
+   repo: tide34
+   image: custom
+   tag: latest
+   name: httpd
+   imagePullPolicy: Always
     
-    readynessProbe:
-     initialDelaySeconds: 20
-     periodSeconds: 5
-     containerPort: 80
+   readynessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 5
+    containerPort: 80
   
-    volumeMounts:
-     destPath: /usr/local/apache2/htdocs  
+   volumeMounts:
+    destPath: /usr/local/apache2/htdocs  
   
-  volume:
+   resources:
+    reqCPU: 150m
+    reqMemory: 200Mi
+    limCPU: 150m
+    limMemory: 200Mi   
+
+ volume:
    name: web-page-files
    type: Directory
    path: /home/folderToStoreFileFromJenkins 
+
+
+#############################################################
+# define parameters to determine horizontalPodAutoscaler.yaml
+
+ # hpa name
+ hpaName: http-request-load-autoscaler
+
+ # define minimal quantity of active container within pod
+ minReplicas: 1
+
+ # define maximal quantity of active container within pod
+ maxReplicas: 5 
+
+ # define range of parameters when moment of slace up is happend 
+ metricType: Resource
+ metricCPU: cpu
+ CPUMetricType: Utilization
+ averageUtilization: 25
+ 
+ # define which service we will scale up
+ targetAPIVersion: apps/v1
+ targetKind: Deployment 
+ 
+ 
+#############################################################
+# define parameters to determine ingress.yaml
+ 
+ # ingress name
+ ingressName: ingress-service
+  
+ # define URL which will be used as domain name to get web page
+ URL: devops.blr
+ 
+ # first igress path
+ ingressPath1: /
+
+
+#############################################################
+# define parameters to determine limitRange.yaml
+
+ # limitRange name
+ limRangeName: limit-for-developer-stage-namespace
+
+ # define limit type for pods
+ podRestriction: Pod
+ podminCPU: 30m
+ podminMemory: 5Mi
+ podmaxCPU: 1
+ podmaxMemory: 800Mi
+
+ # define container limit
+ containerRestriction: Container
+ defaultContainerCPURequest: 100m
+ defaultContainerMemoryRequest: 100Mi
+ defaultContainerCPULimit: 100m
+ defaultContainerMemoryLimit: 100Mi
+ minContainerCPU: 30m
+ minContainerMemory: 20Mi
+ maxContainerCPU: 150m
+ maxContainerMemory: 250Mi 
+
+
+#############################################################
+# define parameters to determine resourceQuota.yaml
+
+ # define resourceQuota name
+ resQuotaName: limits-for-all-objects-in-developer-stage-namespace
+
+ # define overall limits of all resources in current namespace
+ nsCPURequest: 1500m
+ nsMemoryRequest: 1250Mi
+ nsCPULimit: 1500m
+ nsMemoryLimit: 1250Mi 

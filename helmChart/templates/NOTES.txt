@@ -4,8 +4,12 @@
    Release name is {{ .Release.Name }}. 
    Namespace is {{ .Release.Namespace }}. 
 
-3. Application based on {{ .Values.deployment.template.spec.containers.repo }}/{{ .Values.deployment.template.spec.containers.image }} docker image 
-   and handles deployment with {{ .Values.deployment.replicaCount }} copies of pods.
+3. Application based on {{ .Values.containers.repo }}/{{ .Values.containers.image }} docker image 
+   and handles deployment with {{ .Values.replicaCount }} copies of pods.
 
-4. Application reached over URL: 
-   http://{{- .Values.service.externalIPs }}:{{- .Values.service.ports.port }} 
+4. Application can be reached over ip or URL address: 
+   http://{{- .Values.externalIPs }}:{{- .Values.servicePorts.port }}
+   http://{{- .Values.URL }} 
+
+5. Application can scale up and scale down automatically  from {{ .Values.minReplicas }} to {{ .Values.maxReplicas }} 
+   containers depend on CPU load. 

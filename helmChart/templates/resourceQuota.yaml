@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+ name: {{ .Values.resQuotaName | quote }}
+spec:
+ hard:
+  requests.cpu: {{ .Values.nsCPURequest }}
+  requests.memory: {{ .Values.nsMemoryRequest }} 
+  limits.cpu: {{ .Values.nsCPULimit }}
+  limits.memory: {{ .Values.nsMemoryLimit }}

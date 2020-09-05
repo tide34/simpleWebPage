@@ -27,7 +27,7 @@
  
  # define quantity of 
  replicaCount: 3
- minReadySeconds: 10
+ minReadySeconds: 5
  
  # define strategy of rolling-out pods
  
